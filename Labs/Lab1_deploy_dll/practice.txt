@@ -1,0 +1,77 @@
+** B1. Cài môi trường runtime .Net.
+1. Tải và chạy script cài đặt .NET 9.0 Runtime
+
+Bash
+# Tải script từ Microsoft
+wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
+chmod +x ./dotnet-install.sh
+
+# Cài đặt ASP.NET Core Runtime 9.0 vào hệ thống
+sudo ./dotnet-install.sh --runtime aspnetcore --version 9.0.0 --install-dir /usr/share/dotnet
+2. Tạo Symlink để toàn bộ hệ thống nhận lệnh dotnet
+
+Bash
+# Tạo liên kết lệnh dotnet vào /usr/bin
+sudo ln -sf /usr/share/dotnet/dotnet /usr/bin/dotnet
+3. Kiểm tra lại kết quả
+
+Bash
+dotnet --list-runtimes
+
+** B2. Mở project identity Server.
+dotnet publish -c Release -o ./publish
+
+Tại thư mục dự án
+scp -r ./publish/* root@<IP_VPS_CUA_BAN>:/var/www/my-app/
+
+scp -r ./publish/* vandz@arterial-nigel-bequeathable.ngrok-free.dev:lab2_identityServer
+ssh: connect to host arterial-nigel-bequeathable.ngrok-free.dev port 22: Connection refused
+C:\Windows\System32\OpenSSH\scp.exe: Connection closed
+
+-> Tại vì mình dùng ngrok chỉ mở tunnel đến port 7000 ban đầu, muốn dùng được hostName này thì phải tạo ở port 22. tại vì ngrok chỉ tạo tunnel rồi forwarding khác xa vs việc đăng ký hostName xài trên vps.
+
+Do service deploy lên cần các dịch vụ như redis, open telemetry nên cần cpy docker-compose.yaml lên
+
+Ở project mình chạy lệnh sau để xuất ra file migrate.sql
+dotnet ef migrations script --context PersistedGrantDbContext --output migrate_persisted.sql --idempotent
+
+//migrations
+docker exec -i ecommerce_postgres_db psql -U db_user -d IdentityDb < migrate_persisted.sql
+
+Lưu ý nếu mình chạy migrations rồi thì k cần tạo db thủ công, và có thể chạy dll luôn.
+
+fuck: lỗi :))) ảo ma. Là khi chạy identity server do mình xài bên thứ 3 duendue nên gặp bug như sau, mặc định nếu chạy file identity.api.dll thì .net coi môi trường chạy là production nên sẽ dùng https 
+mà mình đang ở mt test nên chưa có https, nên code vào đoạn useHttpsredirection()
+Chạy như này. ASPNETCORE_ENVIRONMENT=Development dotnet Identity.Api.dll.
+
+nano /etc/systemd/system/identity.service
+
+[Unit]
+Description=My Identity Service
+After=network.target docker.service //Docker khởi động, xong mình ms chạy
+Wants=docker.service //Nếu service này khởi động thì kích hoạt docker khởi động.
+
+[Service]
+Type=simple
+User=vandz
+WorkingDirectory=/home/vandz/lab2_identityServer
+ExecStart=/usr/bin/dotnet Identity.Api.dll
+Environment=ASPNETCORE_ENVIRONMENT=Development
+
+# Tự động restart khi crash
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target //Sau khi systemctl enable identity thì nó đưa service này vào danh sách các service sẽ khởi động cùng lúc với server
+# 1. Reload lại systemd để nhận file mới
+sudo systemctl daemon-reload
+
+# 2. Cho phép service tự bật khi boot VPS & chạy ngay lập tức
+sudo systemctl enable --now identity-api
+
+# 3. Kiểm tra trạng thái
+sudo systemctl status identity-api
+
+# 4. Xem log realtime của app
+sudo journalctl -u identity-api -f

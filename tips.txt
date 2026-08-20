@@ -1,0 +1,4 @@
+Alt + U: Hoàn tác (Undo) hành động vừa thực hiện (ví dụ: lỡ tay xóa, gõ nhầm).
+Alt + E: Làm lại (Redo) hành động vừa hoàn tác.
+Nhấn Ctrl + K để cắt bỏ (xóa) toàn bộ vùng đã bôi đen (nếu k bôi đen sẽ xóa dòng).
+Đặt con chõ chuột vào một ví trị nhấn ctrl + 6 hiện Mark set thì có thể tiến thành bôi đen tự vị trí đó, kết hợp ctrl + k là xóa.

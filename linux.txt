@@ -1,0 +1,2 @@
+1. Xem mình thuộc group nào: groups vandz -> vandz : vandz adm cdrom sudo dip plugdev users lxd docker
+2.

@@ -1,0 +1,13 @@
+Lab 1: Triển khai truyền thống (Kestrel + Nginx + Systemd trên Linux VPS)
+Mục tiêu: Hiểu bản chất cách .NET runtime vận hành trên Linux OS và cơ chế Reverse Proxy.
+Thực hành:
+
+Publish app local bằng CLI: dotnet publish -c Release -o ./publish.
+
+Tạo VPS Ubuntu, cài đặt .NET 8 ASP.NET Core Runtime.
+
+Tạo file .service với systemd để quản lý tiến trình Kestrel (auto-restart, log).
+
+Cài Nginx làm Reverse Proxy đứng trước Kestrel (chuyển tiếp traffic từ port 80/443 về localhost:5000).
+
+Deploy Identity Server, mục tiêu có thể gọi api qua tunnel ngrok đến nginx của ubuntu forward về server BE (service)

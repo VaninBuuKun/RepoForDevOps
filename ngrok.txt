@@ -1,0 +1,21 @@
+1. Tải và thêm Public Key của Ngrok vào hệ thống:
+
+Bash
+curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+2. Thêm Repository của Ngrok vào apt:
+
+Bash
+echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+3. Cập nhật apt và cài đặt Ngrok:
+
+Bash
+sudo apt update && sudo apt install ngrok -y
+Sau khi cài thành công, chạy Ngrok:
+Thêm Authtoken:
+
+Bash
+ngrok config add-authtoken <TOKEN_CỦA_BẠN>
+Mở Tunnel trỏ vào cổng Nginx/API:
+
+Bash
+ngrok http 7000
