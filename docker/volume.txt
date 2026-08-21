@@ -1,0 +1,59 @@
+volume: là nơi lưu trữ dữ liệu của container. Nhiều container có thể mount đến 1 volume. một container cx mount đến nhiều volume
+
+Có 2 cách lưu trữ dữ liệu bền vữngcho Container
+
+Cách 1: Named volume
+docker volume create app-1-volume
+//Gắn vào volume
+docker run -d -it --name app-1 -v app-1-volume1:/folder_a -v app-1-volume2:/folder_b -p 8080:80 alpine: tự tạo volume luôn, tạo folder tương ứng trên alpine luôn
+
+vandz@ecommerce:~$ docker volume ls
+DRIVER    VOLUME NAME
+local     03df4e54e794a7732fc13c9873ec072466218de6983a1718c1478073aeeb516f
+local     7b31432b5c48bcdc8da75b95ac1c302bf46f3289014b4d8cc30156ef8aa9a680
+local     5390dd3fb9ab8fc116aae97bae968ba612dcfedeb3e33f4e6a48a7e558fac1d5
+local     app-1-volume1
+local     app-1-volume2
+local     e2cfb5294efc944e4c3126c6757260189a2e54e4e56e1297c59c6f4a56e107e4
+local     lab2_identityserver_postgres_shared_data
+local     mysql_data
+
+/ # ls
+bin       etc       folder_b  lib       mnt       proc      run       srv       tmp       var
+dev       folder_a  home      media     opt       root      sbin      sys       usr
+sẽ có 2 folder_a, folder_b rồi.
+
+/folder_a # echo "Hi cậu" >> a.txt
+/folder_a # cd ..
+/ # echo "Hello cậu b" >> /folder_b/b.txt
+/ # cd folder_b
+/folder_b # cat b.txt
+Hello cậu b
+
+Tiếp theo tạo app-2 nhưng mount volume kia;
+
+vandz@ecommerce:~$ docker run -d -it --name app-2 -v app-1-volume1:/folder_c -v app-1-volume2:/folder_d -p 8081:80 alpine
+
+/folder_c # cat /folder_c/a.txt
+Hi cậu
+/folder_c # cat /folder_d/b.txt
+Hello cậu b
+
+
+Cách 2: Bind mount: Ánh xạ trực tiếp một đường dẫn thực tế có sẵn trên Host Machine vào Container.
+
+docker run -d -it --name app-3 -v $(pwd)/datas:/folder_a -v  -p 8082:80 alpine
+
+vandz@ecommerce:~$ sudo su
+[sudo: authenticate] Password:
+root@ecommerce:/home/vandz# echo "Hello" >> datas/a.txt
+root@ecommerce:/home/vandz# groups docker exec -it app-3 sh^C
+root@ecommerce:/home/vandz#  docker exec -it app-3 sh
+/ # cat /folder_a/a.txt
+Hello
+
+
+thay đổi giao diện mặc định của nginx;
+root@ecommerce:/home/vandz# docker run -d   --name my-cool-web   -p 8000:80   -v $(pwd)/index.html:/usr/share/nginx/html
+/index.html   nginx:alpine
+

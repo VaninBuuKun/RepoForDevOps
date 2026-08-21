@@ -1,0 +1,44 @@
+
+dung het container
+docker stop $(docker ps -q)
+xoa het container
+docker rm -f $(docker ps -aq)
+
+Lấy danh sách container id
+
+$ này là lồng lệnh tức là sẽ lấy kết quả từ lệnh trong (), rồi 
+vandz@ecommerce:~$ docker ps -aq    (a là các container hiện có, q là các container kết cả đang tắc)
+b440a6b362df
+3c331c0642d6
+48b78ba0b69c
+80e8ac82fea0
+32844b01afab
+36b2c787c225
+
+docker ps -a (lấy hết)
+docker ps (lấy đang chạy)
+
+vandz@ecommerce:~$ echo $(docker ps -aq) >> input.txt
+vandz@ecommerce:~$ cat input.txt
+b440a6b362df 3c331c0642d6 48b78ba0b69c 80e8ac82fea0 32844b01afab 36b2c787c225
+
+$(): nó lấy kết quả từ terminal, xếp từng hàng thành các đối số truyền vào. Ví dụ file có 
+A 
+B
+echo $(cat >> input.txt) >> input2.txt: nó ra A B
+
+
+docker run : pull image nếu chưa có, tạo container và chạy.
+
+CONTAINER ID   IMAGE     COMMAND     CREATED         STATUS         PORTS     NAMES,
+
+cột command sẽ cho thấy lệnh để start container.
+Nếu lệnh command vào không duy trì đucợ container thì nó sẽ làm container exited luôn
+ví dụ docker run -it ubuntu ls -a
+
+từ sau image ubuntu thì sẽ là lệnh command để khởi ododngj container. ls -a
+
+mỗi docker compose file sẽ dựa vào folder chứa nó, khi chạy á thì đặt tên mạng là tên folder_default luôn. 
+các container trong cái bridge đó có thể giao tiếp với nhau bên ngoài thì k
+
+56866c4d2f7c   lab2_identityserver_default   bridge    local

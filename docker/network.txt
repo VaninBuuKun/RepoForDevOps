@@ -1,0 +1,21 @@
+Lab kết nối mạng.
+docker run -d -it --name app-1 -p 8080:80 alpine
+docker run -d -it --name app-2 -p 8081:80 alpine
+
+Lưu ý phải kèm -it với -d. -d nghĩa là ngắt kết nối terminal của mình rồi đẩy xuông chạy ngầm. nếu có -it thì sẽ:
+-i (Interactive): Giữ luồng stdin (bàn phím) luôn mở để chờ bạn nhập dữ liệu.
+-t (TTY): Tạo một màn hình Terminal ảo.
+Tiến trình sh sẽ luôn đợi người dùng nhập dữ liệu => tiến trình k dừng => container vẫn chạy.
+
+
+
+
+docker exec -it app-1 sh (sh hoacwj bin/sh)
+apk update 
+apk add curl inetutils-ping net-tools
+
+docker inspect app-1
+=> ip,
+
+app-2 ping den ip app-1 : success:)))
+
